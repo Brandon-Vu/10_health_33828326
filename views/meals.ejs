@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Meal Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    h2 { color: #2c3e50; }
+    ul { list-style-type: none; padding-left: 0; }
+    li { margin: 0.5rem 0; }
+    label { display: block; margin: 0.5rem 0; }
+    input { margin-left: 0.5rem; }
+    form.inline { display: inline; }
+  </style>
+</head>
+<body>
+
+  <h2>Welcome, <%= session.user.username %>!</h2>
+
+  <h3>Your Logged Meals</h3>
+  <ul>
+    <% if (meals.length === 0) { %>
+      <li>No meals logged yet.</li>
+    <% } else { %>
+      <% meals.forEach(meal => { %>
+        <li>
+          <strong><%= meal.meal_name %></strong> — 
+          <%= meal.calories %> calories on 
+          <%= new Date(meal.meal_date).toDateString() %>
+
+          <a href="/meals/edit/<%= meal.id %>">Edit</a>
+
+          <form class="inline" action="/meals/delete/<%= meal.id %>" method="POST" onsubmit="return confirm('Delete this meal?');">
+            <button type="submit">Delete</button>
+          </form>
+        </li>
+      <% }) %>
+    <% } %>
+  </ul>
+
+  <h3>Log a New Meal</h3>
+  <form action="/meals" method="POST">
+    <label>Meal Name: <input type="text" name="meal_name" required></label>
+    <label>Calories: <input type="number" name="calories" required></label>
+    <label>Date: <input type="date" name="meal_date" required></label>
+    <button type="submit">Add Meal</button>
+  </form>
+
+  <p><a href="/logout">Logout</a></p>
+
+</body>
+</html>

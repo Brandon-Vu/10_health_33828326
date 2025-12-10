@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Meal</title>
+</head>
+<body>
+  <h2>Edit Meal</h2>
+  <form method="POST">
+    <label>Meal Name:
+      <input type="text" name="meal_name" value="<%= meal.meal_name %>" required>
+    </label>
+    <label>Calories:
+      <input type="number" name="calories" value="<%= meal.calories %>" required>
+    </label>
+    <label>Date:
+      <input type="date" name="meal_date" value="<%= meal.meal_date.toISOString().slice(0,10) %>" required>
+    </label>
+    <button type="submit">Update Meal</button>
+  </form>
+
+  <p><a href="/meals">Cancel</a></p>
+</body>
+</html>
