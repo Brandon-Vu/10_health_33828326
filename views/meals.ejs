@@ -10,6 +10,7 @@
     label { display: block; margin: 0.5rem 0; }
     input { margin-left: 0.5rem; }
     form.inline { display: inline; }
+    #calorieDisplay { font-weight: bold; margin-top: 0.5rem; color: #c0392b; }
   </style>
 </head>
 <body>
@@ -30,9 +31,7 @@
           <strong><%= meal.meal_name %></strong> —
           <%= meal.calories %> calories on
           <%= new Date(meal.meal_date).toDateString() %>
-
           <a href="/meals/edit/<%= meal.id %>">Edit</a>
-
           <form class="inline" action="/meals/delete/<%= meal.id %>" method="POST" onsubmit="return confirm('Delete this meal?');">
             <button type="submit">Delete</button>
           </form>
@@ -48,7 +47,7 @@
       <button type="button" onclick="fetchCalories()">Fetch Calories</button>
     </label>
 
-    <p id="calorieDisplay" style="font-weight: bold;"></p>
+    <p id="calorieDisplay"></p>
     <input type="hidden" name="calories">
 
     <label>Date:
@@ -65,9 +64,11 @@
       const calorieDisplay = document.getElementById('calorieDisplay');
       const name = mealInput.value.trim();
 
+      calorieField.value = '';
+      calorieDisplay.textContent = '';
+
       if (!name) {
         calorieDisplay.textContent = 'Please enter a meal name.';
-        calorieField.value = '';
         return;
       }
 
@@ -79,21 +80,12 @@
           calorieDisplay.textContent = `Estimated Calories: ${data.calories}`;
           calorieField.value = data.calories;
         } else {
-          calorieDisplay.textContent = data.error || 'Could not estimate calories.';
-          calorieField.value = '';
+          calorieDisplay.innerHTML = `Could not fetch calories. You may still submit manually.`;
         }
       } catch (err) {
         console.error('Fetch error:', err);
-        calorieDisplay.textContent = 'Error fetching calories.';
-        calorieField.value = '';
+        calorieDisplay.innerHTML = `Error fetching calories. You may still submit manually.`;
       }
-        if (res.ok && data.calories !== undefined) {
-        calorieDisplay.textContent = `Estimated Calories: ${data.calories}`;
-        calorieField.value = data.calories;
-        } else {
-        calorieDisplay.innerHTML = `Failed to fetch calories. <br><small>You can still log the meal manually.</small>`;
-        calorieField.value = 0; 
-        }
     }
   </script>
 

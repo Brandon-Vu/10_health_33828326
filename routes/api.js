@@ -11,8 +11,13 @@ router.get('/food-info', async (req, res) => {
   try {
     const parseURL = `https://api.edamam.com/api/food-database/v2/parser?app_id=${APP_ID}&app_key=${APP_KEY}&ingr=${encodeURIComponent(query)}`;
     const parseRes = await fetch(parseURL);
-    const parseData = await parseRes.json();
 
+    if (parseRes.status === 429) {
+      console.warn('Parse request failed with status: 429');
+      return res.status(429).json({ error: 'Rate limit exceeded. Please try again later.' });
+    }
+
+    const parseData = await parseRes.json();
     const hint = parseData.hints?.[0];
     if (!hint) return res.json({ calories: 0 });
 
@@ -32,8 +37,13 @@ router.get('/food-info', async (req, res) => {
       })
     });
 
+    if (nutrientsRes.status === 429) {
+      console.warn('Nutrients request failed with status: 429');
+      return res.status(429).json({ error: 'Rate limit exceeded. Please try again later.' });
+    }
+
     const nutrientsData = await nutrientsRes.json();
-    res.json({ calories: nutrientsData.calories });
+    res.json({ calories: nutrientsData.calories || 0 });
   } catch (err) {
     console.error('API error:', err);
     res.status(500).json({ error: 'Failed to fetch calories' });
