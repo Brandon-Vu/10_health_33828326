@@ -1,7 +1,8 @@
-const APP_ID = process.env.EDAMAM_APP_ID;
-const APP_KEY = process.env.EDAMAM_APP_KEY;
+const APP_ID = '8302de4e';
+const APP_KEY = '557a7b3d6f7d6a86896bc933535fddaa';
 
-// Function to get calories from Edamam API based on user input
+const userInput = '100 strawberries';
+
 async function getCaloriesFromInput(input) {
   const url = `https://api.edamam.com/api/food-database/v2/parser?app_id=${APP_ID}&app_key=${APP_KEY}&ingr=${encodeURIComponent(input)}`;
 
@@ -10,13 +11,16 @@ async function getCaloriesFromInput(input) {
     const parseData = await parseRes.json();
 
     if (!parseData.hints || parseData.hints.length === 0) {
-      return { error: 'Food not recognized.' };
+      console.log('Food not recognized.');
+      return;
     }
 
     const food = parseData.hints[0].food;
     const measure = parseData.hints[0].measures.find(m => m.label === 'Serving') || parseData.hints[0].measures[0];
+
     const quantity = parseData.parsed?.[0]?.quantity || 1;
 
+    // Get nutrition info
     const nutrientsUrl = `https://api.edamam.com/api/food-database/v2/nutrients?app_id=${APP_ID}&app_key=${APP_KEY}`;
     const nutrientsRes = await fetch(nutrientsUrl, {
       method: 'POST',
@@ -33,11 +37,15 @@ async function getCaloriesFromInput(input) {
     });
 
     const nutrition = await nutrientsRes.json();
-    return { calories: nutrition.calories ?? null };
 
+    if (nutrition.calories !== undefined) {
+      console.log(`Calories for "${input}": ${nutrition.calories}`);
+    } else {
+      console.log('Unable to retrieve calories.');
+    }
   } catch (err) {
-    return { error: err.message };
+    console.error('API error:', err.message);
   }
 }
 
-module.exports = { getCaloriesFromInput };
+getCaloriesFromInput(userInput);

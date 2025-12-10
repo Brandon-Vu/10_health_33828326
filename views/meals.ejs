@@ -27,8 +27,8 @@
     <% } else { %>
       <% meals.forEach(meal => { %>
         <li>
-          <strong><%= meal.meal_name %></strong> — 
-          <%= meal.calories %> calories on 
+          <strong><%= meal.meal_name %></strong> —
+          <%= meal.calories %> calories on
           <%= new Date(meal.meal_date).toDateString() %>
 
           <a href="/meals/edit/<%= meal.id %>">Edit</a>
@@ -43,11 +43,59 @@
 
   <h3>Log a New Meal</h3>
   <form action="/meals" method="POST">
-    <label>Meal Name: <input type="text" name="meal_name" required></label>
-    <label>Calories: <input type="number" name="calories" required></label>
-    <label>Date: <input type="date" name="meal_date" required></label>
+    <label>Meal Name:
+      <input type="text" name="meal_name" id="mealInput" required autocomplete="off">
+      <button type="button" onclick="fetchCalories()">Fetch Calories</button>
+    </label>
+
+    <p id="calorieDisplay" style="font-weight: bold;"></p>
+    <input type="hidden" name="calories">
+
+    <label>Date:
+      <input type="date" name="meal_date" required>
+    </label>
+
     <button type="submit">Add Meal</button>
   </form>
+
+  <script>
+    async function fetchCalories() {
+      const mealInput = document.getElementById('mealInput');
+      const calorieField = document.querySelector('input[name="calories"]');
+      const calorieDisplay = document.getElementById('calorieDisplay');
+      const name = mealInput.value.trim();
+
+      if (!name) {
+        calorieDisplay.textContent = 'Please enter a meal name.';
+        calorieField.value = '';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/food-info?query=' + encodeURIComponent(name));
+        const data = await res.json();
+
+        if (res.ok && data.calories !== undefined) {
+          calorieDisplay.textContent = `Estimated Calories: ${data.calories}`;
+          calorieField.value = data.calories;
+        } else {
+          calorieDisplay.textContent = data.error || 'Could not estimate calories.';
+          calorieField.value = '';
+        }
+      } catch (err) {
+        console.error('Fetch error:', err);
+        calorieDisplay.textContent = 'Error fetching calories.';
+        calorieField.value = '';
+      }
+        if (res.ok && data.calories !== undefined) {
+        calorieDisplay.textContent = `Estimated Calories: ${data.calories}`;
+        calorieField.value = data.calories;
+        } else {
+        calorieDisplay.innerHTML = `Failed to fetch calories. <br><small>You can still log the meal manually.</small>`;
+        calorieField.value = 0; 
+        }
+    }
+  </script>
 
   <p><a href="/about">About</a> | <a href="/logout">Logout</a></p>
 
