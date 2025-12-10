@@ -15,6 +15,10 @@
 <body>
 
   <h2>Welcome, <%= session.user.username %>!</h2>
+  <p>You’ve logged <%= todaySummary.mealCount || 0 %> meal(s) today, totaling <%= todaySummary.totalCalories || 0 %> calories.</p>
+
+  <h3>Weekly Summary</h3>
+  <p>In the past 7 days, you’ve logged <%= weekSummary.mealCount || 0 %> meal(s), totaling <%= weekSummary.totalCalories || 0 %> calories.</p>
 
   <h3>Your Logged Meals</h3>
   <ul>
@@ -45,7 +49,7 @@
     <button type="submit">Add Meal</button>
   </form>
 
-  <p><a href="/logout">Logout</a></p>
+  <p><a href="/about">About</a> | <a href="/logout">Logout</a></p>
 
 </body>
 </html>

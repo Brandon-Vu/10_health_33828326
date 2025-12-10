@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Search Meals</title>
+</head>
+<body>
+  <h2>Search Your Meals</h2>
+  <form method="GET" action="/meals/search">
+    <input type="text" name="q" placeholder="Search by meal name" required>
+    <button type="submit">Search</button>
+  </form>
+
+  <% if (meals) { %>
+    <h3>Results:</h3>
+    <% if (meals.length === 0) { %>
+      <p>No meals found.</p>
+    <% } else { %>
+      <ul>
+        <% meals.forEach(meal => { %>
+          <li><strong><%= meal.meal_name %></strong> — <%= meal.calories %> calories on <%= new Date(meal.meal_date).toDateString() %></li>
+        <% }) %>
+      </ul>
+    <% } %>
+  <% } %>
+
+  <p><a href="/meals">Back to Dashboard</a></p>
+</body>
+</html>

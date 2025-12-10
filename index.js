@@ -9,7 +9,10 @@ const mealRoutes = require('./routes/meals');
 const app = express();
 const PORT = 8000;
 
+const apiRoutes = require('./routes/api');
+
 // Middleware
+app.use('/api', apiRoutes);
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
@@ -31,6 +34,11 @@ app.set('views', path.join(__dirname, 'views'));
 // Routes
 app.use('/', authRoutes);
 app.use('/meals', mealRoutes);
+
+// About page
+app.get('/about', (req, res) => {
+  res.render('about');
+});
 
 // Start server
 app.listen(PORT, () => {

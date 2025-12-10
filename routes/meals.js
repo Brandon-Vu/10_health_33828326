@@ -2,16 +2,52 @@ const express = require('express');
 const router = express.Router();
 const db = require('../models/db');
 
-// Show form to log a meal
-router.get('/new', (req, res) => {
+// Show meals with daily and weekly summary
+router.get('/', async (req, res) => {
   if (!req.session.user) return res.redirect('/login');
-  res.render('log_meal');
+
+  try {
+    const userId = req.session.user.id;
+
+    // Fetch meals
+    const [meals] = await db.execute(
+      'SELECT id, meal_name, calories, meal_date FROM meals WHERE user_id = ? ORDER BY meal_date DESC',
+      [userId]
+    );
+
+    // Today's summary
+    const [todaySummary] = await db.execute(
+      `SELECT COUNT(*) AS mealCount, SUM(calories) AS totalCalories
+       FROM meals
+       WHERE user_id = ? AND meal_date = CURDATE()`,
+      [userId]
+    );
+
+    // Weekly summary (past 7 days)
+    const [weekSummary] = await db.execute(
+      `SELECT COUNT(*) AS mealCount, SUM(calories) AS totalCalories
+       FROM meals
+       WHERE user_id = ? AND meal_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 6 DAY) AND CURDATE()`,
+      [userId]
+    );
+
+    res.render('meals', {
+      session: req.session,
+      meals,
+      todaySummary: todaySummary[0],
+      weekSummary: weekSummary[0]
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Failed to load meals.');
+  }
 });
 
 // Handle meal submission
 router.post('/', async (req, res) => {
   const { meal_name, meal_date, calories } = req.body;
   const user_id = req.session.user.id;
+
   try {
     await db.execute(
       'INSERT INTO meals (user_id, meal_name, meal_date, calories) VALUES (?, ?, ?, ?)',
@@ -21,25 +57,6 @@ router.post('/', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.send('Error saving meal');
-  }
-});
-
-// Show all meals for the user
-router.get('/', async (req, res) => {
-  if (!req.session.user) {
-    return res.redirect('/login');
-  }
-
-  try {
-    const [meals] = await db.execute(
-      'SELECT id, meal_name, calories, meal_date FROM meals WHERE user_id = ? ORDER BY meal_date DESC',
-      [req.session.user.id]
-    );
-
-    res.render('meals', { session: req.session, meals });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Failed to load meals.');
   }
 });
 
@@ -72,5 +89,19 @@ router.post('/delete/:id', async (req, res) => {
   res.redirect('/meals');
 });
 
-// Export the router
+// Search meals
+router.get('/search', async (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+
+  const query = req.query.q || '';
+  const [meals] = await db.execute(
+    `SELECT * FROM meals 
+     WHERE user_id = ? AND meal_name LIKE ? 
+     ORDER BY meal_date DESC`,
+    [req.session.user.id, `%${query}%`]
+  );
+
+  res.render('search', { meals });
+});
+
 module.exports = router;
