@@ -1,6 +1,7 @@
 const APP_ID = process.env.EDAMAM_APP_ID;
 const APP_KEY = process.env.EDAMAM_APP_KEY;
 
+// Function to get calories from Edamam API based on user input
 async function getCaloriesFromInput(input) {
   const url = `https://api.edamam.com/api/food-database/v2/parser?app_id=${APP_ID}&app_key=${APP_KEY}&ingr=${encodeURIComponent(input)}`;
 

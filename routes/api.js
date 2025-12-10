@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getCaloriesFromInput } = require('../utils/edamam');
 
+// Endpoint to get calorie info for a food item
 router.get('/food-info', async (req, res) => {
   const query = req.query.q;
 
@@ -18,4 +19,5 @@ router.get('/food-info', async (req, res) => {
   res.json({ calories: result.calories });
 });
 
+// Export the router
 module.exports = router;
