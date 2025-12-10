@@ -22,8 +22,12 @@ router.post('/register', async (req, res) => {
 });
 
 // Login route
-router.get('/login', (req, res) => {
-  res.render('login', { error: null });
+router.get('/', (req, res) => {
+  if (req.session.user) {
+    res.redirect('/meals'); 
+  } else {
+    res.redirect('/login');
+  }
 });
 
 // Handle login

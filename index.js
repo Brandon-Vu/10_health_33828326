@@ -18,6 +18,12 @@ app.use(session({
   saveUninitialized: false
 }));
 
+// Make session available in templates
+app.use((req, res, next) => {
+  res.locals.session = req.session;
+  next();
+});
+
 // Set EJS as templating engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));

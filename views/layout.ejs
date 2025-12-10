@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NutriLog</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <h1><a href="/">NutriLog</a></h1>
+    <% if (session && session.user) { %>
+      <p>Welcome, <%= session.user.username %> | <a href="/logout">Logout</a></p>
+    <% } %>
+  </header>
+
+  <main>
+    <%- body %>
+  </main>
+</body>
+</html>
