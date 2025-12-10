@@ -22,9 +22,14 @@ router.post('/register', async (req, res) => {
 });
 
 // Login route
+router.get('/login', (req, res) => {
+  res.render('login', { error: null });
+});
+
+// Home route (redirects to /meals or /login)
 router.get('/', (req, res) => {
   if (req.session.user) {
-    res.redirect('/meals'); 
+    res.redirect('/meals');
   } else {
     res.redirect('/login');
   }

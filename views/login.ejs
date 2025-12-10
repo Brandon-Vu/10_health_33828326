@@ -1,18 +1,25 @@
-<%- include('layout') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | NutriLog</title>
+</head>
+<body>
+  <h2>Login</h2>
+  <form action="/login" method="POST">
+    <label>Username:</label>
+    <input type="text" name="username" required>
 
-<h2>Login</h2>
-<form action="/login" method="POST">
-  <label>Username:</label>
-  <input type="text" name="username" required>
-  
-  <label>Password:</label>
-  <input type="password" name="password" required>
-  
-  <button type="submit">Log In</button>
-</form>
+    <label>Password:</label>
+    <input type="password" name="password" required>
 
-<% if (error) { %>
-  <p style="color: red;"><%= error %></p>
-<% } %>
+    <button type="submit">Log In</button>
+  </form>
 
-<p>Don't have an account? <a href="/register">Register here</a></p>
+  <% if (error) { %>
+    <p style="color: red;"><%= error %></p>
+  <% } %>
+
+  <p>Don't have an account? <a href="/register">Register here</a></p>
+</body>
+</html>
