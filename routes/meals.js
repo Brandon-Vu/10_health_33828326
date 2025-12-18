@@ -36,7 +36,8 @@ router.get('/', async (req, res) => {
       session: req.session,
       meals,
       todaySummary: todaySummary[0],
-      weekSummary: weekSummary[0]
+      weekSummary: weekSummary[0],
+      basePath: process.env.HEALTH_BASE_PATH || ''
     });
   } catch (err) {
     console.error(err);

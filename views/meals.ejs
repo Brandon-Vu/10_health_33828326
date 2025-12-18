@@ -31,8 +31,11 @@
           <strong><%= meal.meal_name %></strong> —
           <%= meal.calories %> calories on
           <%= new Date(meal.meal_date).toDateString() %>
-          <a href="/meals/edit/<%= meal.id %>">Edit</a>
-          <form class="inline" action="/meals/delete/<%= meal.id %>" method="POST" onsubmit="return confirm('Delete this meal?');">
+          <a href="<%= basePath %>/meals/edit/<%= meal.id %>">Edit</a>
+          <form class="inline"
+                action="<%= basePath %>/meals/delete/<%= meal.id %>"
+                method="POST"
+                onsubmit="return confirm('Delete this meal?');">
             <button type="submit">Delete</button>
           </form>
         </li>
@@ -41,7 +44,7 @@
   </ul>
 
   <h3>Log a New Meal</h3>
-  <form action="/meals" method="POST">
+  <form action="<%= basePath %>/meals" method="POST">
     <label>Meal Name:
       <input type="text" name="meal_name" id="mealInput" required autocomplete="off">
       <button type="button" onclick="fetchCalories()">Fetch Calories</button>
@@ -58,6 +61,8 @@
   </form>
 
   <script>
+    const basePath = "<%= basePath %>";
+
     async function fetchCalories() {
       const mealInput = document.getElementById('mealInput');
       const calorieField = document.querySelector('input[name="calories"]');
@@ -73,23 +78,28 @@
       }
 
       try {
-        const res = await fetch('/api/food-info?query=' + encodeURIComponent(name));
+        const url = `${basePath}/api/food-info?query=${encodeURIComponent(name)}`;
+        const res = await fetch(url);
         const data = await res.json();
 
         if (res.ok && data.calories !== undefined) {
           calorieDisplay.textContent = `Estimated Calories: ${data.calories}`;
           calorieField.value = data.calories;
         } else {
-          calorieDisplay.innerHTML = `Could not fetch calories. You may still submit manually.`;
+          calorieDisplay.textContent = 'Could not fetch calories. You may still submit manually.';
         }
       } catch (err) {
         console.error('Fetch error:', err);
-        calorieDisplay.innerHTML = `Error fetching calories. You may still submit manually.`;
+        calorieDisplay.textContent = 'Error fetching calories. You may still submit manually.';
       }
     }
   </script>
 
-  <p><a href="/meals/search">Search</a> | <a href="/about">About</a> | <a href="/logout">Logout</a></p>
+  <p>
+    <a href="<%= basePath %>/meals/search">Search</a> |
+    <a href="<%= basePath %>/about">About</a> |
+    <a href="<%= basePath %>/logout">Logout</a>
+  </p>
 
 </body>
 </html>
