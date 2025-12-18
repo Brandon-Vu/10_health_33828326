@@ -3,6 +3,8 @@ const bcrypt = require('bcrypt');
 const db = require('../models/db');
 const router = express.Router();
 
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
 // Registration route
 router.get('/register', (req, res) => {
   res.render('register', { error: null });
@@ -11,8 +13,16 @@ router.get('/register', (req, res) => {
 // Handle registration
 router.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
-  const hash = await bcrypt.hash(password, 10);
+
+  // Validate password
+  if (!passwordRegex.test(password)) {
+    return res.render('register', {
+      error: 'Password must be at least 8 characters and include 1 lowercase, 1 uppercase, 1 number, and 1 special character.'
+    });
+  }
+
   try {
+    const hash = await bcrypt.hash(password, 10);
     await db.execute('INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)', [username, email, hash]);
     res.redirect('/login');
   } catch (err) {
@@ -26,7 +36,7 @@ router.get('/login', (req, res) => {
   res.render('login', { error: null });
 });
 
-// Home route (redirects to /meals or /login)
+// Home route
 router.get('/', (req, res) => {
   if (req.session.user) {
     res.redirect('/meals');
