@@ -4,7 +4,7 @@ const db = require('../models/db');
 
 // Show meals with daily and weekly summary
 router.get('/', async (req, res) => {
-  if (!req.session.user) return res.redirect('/login');
+  if (!req.session.user) return res.redirect(process.env.HEALTH_BASE_PATH + '/login');
 
   try {
     const userId = req.session.user.id;
@@ -53,7 +53,7 @@ router.post('/', async (req, res) => {
       'INSERT INTO meals (user_id, meal_name, meal_date, calories) VALUES (?, ?, ?, ?)',
       [user_id, meal_name, meal_date, calories]
     );
-    res.redirect('/meals');
+    res.redirect(process.env.HEALTH_BASE_PATH + '/meals');
   } catch (err) {
     console.error(err);
     res.send('Error saving meal');
@@ -66,7 +66,7 @@ router.get('/edit/:id', async (req, res) => {
     'SELECT * FROM meals WHERE id = ? AND user_id = ?',
     [req.params.id, req.session.user.id]
   );
-  if (!rows.length) return res.redirect('/meals');
+  if (!rows.length) return res.redirect(process.env.HEALTH_BASE_PATH + '/meals');
   res.render('edit_meal', { meal: rows[0] });
 });
 
@@ -77,7 +77,7 @@ router.post('/edit/:id', async (req, res) => {
     'UPDATE meals SET meal_name = ?, meal_date = ?, calories = ? WHERE id = ? AND user_id = ?',
     [meal_name, meal_date, calories, req.params.id, req.session.user.id]
   );
-  res.redirect('/meals');
+  res.redirect(process.env.HEALTH_BASE_PATH + '/meals');
 });
 
 // Handle meal deletion
@@ -86,12 +86,12 @@ router.post('/delete/:id', async (req, res) => {
     'DELETE FROM meals WHERE id = ? AND user_id = ?',
     [req.params.id, req.session.user.id]
   );
-  res.redirect('/meals');
+  res.redirect(process.env.HEALTH_BASE_PATH + '/meals');
 });
 
 // Search meals
 router.get('/search', async (req, res) => {
-  if (!req.session.user) return res.redirect('/login');
+  if (!req.session.user) return res.redirect(process.env.HEALTH_BASE_PATH + '/login');
 
   const query = req.query.q || '';
   const [meals] = await db.execute(
