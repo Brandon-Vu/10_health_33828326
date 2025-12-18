@@ -1,0 +1,6 @@
+https://doc.gold.ac.uk/usr/432/login
+https://doc.gold.ac.uk/usr/432/register
+https://doc.gold.ac.uk/usr/432/meals
+https://doc.gold.ac.uk/usr/432/meals/search
+https://doc.gold.ac.uk/usr/432/about
+https://doc.gold.ac.uk/usr/432/meals/edit/
