@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../models/db');
+require('dotenv').config();
 
 // Show meals with daily and weekly summary
 router.get('/', async (req, res) => {

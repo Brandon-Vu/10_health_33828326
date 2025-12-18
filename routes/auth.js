@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const db = require('../models/db');
 const router = express.Router();
+require('dotenv').config();
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
@@ -53,7 +54,7 @@ router.post('/login', async (req, res) => {
     const user = rows[0];
     if (user && await bcrypt.compare(password, user.password_hash)) {
       req.session.user = { id: user.id, username: user.username };
-      res.redirect('/meals');
+      res.redirect(process.env.HEALTH_BASE_PATH + '/meals');
     } else {
       res.render('login', { error: 'Invalid username or password' });
     }
@@ -65,7 +66,7 @@ router.post('/login', async (req, res) => {
 
 // Logout route
 router.get('/logout', (req, res) => {
-  req.session.destroy(() => res.redirect('/login'));
+  req.session.destroy(() => res.redirect(process.env.HEALTH_BASE_PATH + '/login'));
 });
 
 module.exports = router;
