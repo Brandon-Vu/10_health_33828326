@@ -14,7 +14,12 @@ router.get('/register', (req, res) => {
 router.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
 
-  // Validate password
+  console.log('REGISTER BODY:', req.body);
+
+  if (!username || !email || !password) {
+    return res.render('register', { error: 'Missing username, email, or password (req.body is empty or form names are wrong).' });
+  }
+
   if (!passwordRegex.test(password)) {
     return res.render('register', {
       error: 'Password must be at least 8 characters and include 1 lowercase, 1 uppercase, 1 number, and 1 special character.'
@@ -22,12 +27,34 @@ router.post('/register', async (req, res) => {
   }
 
   try {
+    await db.execute('SELECT 1');
+
     const hash = await bcrypt.hash(password, 10);
-    await db.execute('INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)', [username, email, hash]);
-    res.redirect('/login');
+    await db.execute(
+      'INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)',
+      [username, email, hash]
+    );
+
+    return res.redirect('/login');
+
   } catch (err) {
-    console.error(err);
-    res.render('register', { error: 'Username or email already exists.' });
+    console.error('REGISTER ERROR:', err);
+
+    const details = err.code || err.message || 'Unknown error';
+
+    if (err.code === 'ER_DUP_ENTRY') {
+      return res.render('register', { error: 'Duplicate: username or email already exists (ER_DUP_ENTRY).' });
+    }
+
+    if (err.code === 'ER_ACCESS_DENIED_ERROR') {
+      return res.render('register', { error: 'DB auth failed (ER_ACCESS_DENIED_ERROR). Check DB user/password in .env and db.js.' });
+    }
+
+    if (err.code === 'ER_BAD_DB_ERROR') {
+      return res.render('register', { error: 'Database not found (ER_BAD_DB_ERROR). Check DB name in .env.' });
+    }
+
+    return res.render('register', { error: `Register failed: ${details}` });
   }
 });
 
