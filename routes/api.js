@@ -1,8 +1,10 @@
+require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 
 const APP_ID = process.env.EDAMAM_APP_ID;
 const APP_KEY = process.env.EDAMAM_APP_KEY;
+
 
 router.get('/food-info', async (req, res) => {
   const query = req.query.query;
