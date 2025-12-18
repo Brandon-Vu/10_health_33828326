@@ -4,7 +4,7 @@ const db = require('../models/db');
 
 // Show meals with daily and weekly summary
 router.get('/', async (req, res) => {
-  if (!req.session.user) return res.redirect('/loginn');
+  if (!req.session.user) return res.redirect('/login');
 
   try {
     const userId = req.session.user.id;
