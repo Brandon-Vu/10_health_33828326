@@ -1,8 +1,8 @@
-NutriLog 
+## NutriLog 
 
 NutriLog is a web-based meal logging application that allows users to record meals, automatically estimate calories using the Edamam Food Database API, and track daily and weekly calorie totals. The application includes user authentication, database persistence, and search functionality.
 
-Features
+## Features
 - User authentication (register, login, logout)
 - Secure password hashing using bcrypt
 - Log meals with automatic calorie estimation via Edamam API
@@ -12,7 +12,7 @@ Features
 - MySQL database persistence
 - Server-side rendering using EJS templates
 
-Technologies Used
+## Technologies Used
 
 Application Tier
 - Node.js
@@ -28,7 +28,8 @@ Data Tier
 External API
 - Edamam Food Database API: Used to estimate calories from natural language food input (e.g. “2 bananas”).
 
-Project Structure
+## Project Structure
+```text
 NutriLog/
 │
 ├── models/
@@ -54,7 +55,7 @@ NutriLog/
 ├── package.json
 └── .env
 
-Installation Instructions
+## Installation Instructions
 
 1. Installation Instructions
 - git clone https://github.com/Brandon-Vu/10_health_33828326
@@ -63,17 +64,17 @@ Installation Instructions
 2. Install Dependencies
 - npm install
 
-Default Login Credentials
+## Default Login Credentials
 For marking and testing purposes:
 - Username: gold
 - Password: smiths
 
-API Notes (Edamam)
+## API Notes (Edamam)
 - The Edamam Food Database API is used to estimate calories.
 - The free tier has rate limits, so some uncommon or rapid requests may fail.
 - If a food item cannot be recognised, the application handles the error gracefully and allows manual continuation.
 
-User Journey
+## User Journey
 
 - User logs in or registers
 - User is redirected to the meals dashboard
@@ -83,7 +84,7 @@ User Journey
 - Users can edit, delete, or search previous meals
 - Daily and weekly summaries update automatically
 
-Advanced Techniques
+## Advanced Techniques
 
 - External REST API integration (Edamam)
 - Password hashing and authentication
