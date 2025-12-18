@@ -54,7 +54,7 @@ NutriLog/
 ├── index.js
 ├── package.json
 └── .env
-
+```
 ## Installation Instructions
 
 1. Installation Instructions
